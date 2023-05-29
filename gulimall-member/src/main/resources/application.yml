@@ -8,6 +8,13 @@ spring:
     url: jdbc:mysql://192.168.56.123:3306/gulimall-ums?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: root
+  cloud:
+    nacos:
+      # Nacos 作为注册中心的配置项，对应 NacosDiscoveryProperties 配置类
+      discovery:
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+  application:
+    name: gulimall-member
 
 mybatis:
   mapperLocations: classpath:mapper/**/*.xml

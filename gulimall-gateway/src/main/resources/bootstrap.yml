@@ -1,0 +1,17 @@
+server:
+  port: 88
+
+spring:
+  cloud:
+    nacos:
+      # Nacos 作为注册中心的配置项，对应 NacosDiscoveryProperties 配置类
+      discovery:
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+      config:
+        server-addr: 127.0.0.1:8848 #Nacos作为配置中心地址
+        file-extension: yml #指定yml格式的配置
+        namespace: 5139fb72-29bf-41cb-a26c-9b3f3289a880
+
+
+  application:
+    name: gulimall-gateway
