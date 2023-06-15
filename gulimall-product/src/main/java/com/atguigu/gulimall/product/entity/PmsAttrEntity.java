@@ -23,7 +23,7 @@ public class PmsAttrEntity implements Serializable {
 	 * 属性id
 	 */
 	@TableId
-	private Long attrId;
+	private String attrId;
 	/**
 	 * 属性名
 	 */
@@ -55,7 +55,7 @@ public class PmsAttrEntity implements Serializable {
 	/**
 	 * 所属分类
 	 */
-	private Long catelogId;
+	private String catelogId;
 	/**
 	 * 快速展示【是否展示在介绍上；0-否 1-是】，在sku中仍然可以调整
 	 */

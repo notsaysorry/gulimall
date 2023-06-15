@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 /**
@@ -27,7 +28,7 @@ public class PmsCategoryEntity implements Serializable {
 	 * 分类id
 	 */
 	@TableId
-	private Long catId;
+	private String catId;
 	/**
 	 * 分类名称
 	 */
@@ -35,7 +36,7 @@ public class PmsCategoryEntity implements Serializable {
 	/**
 	 * 父分类id
 	 */
-	private Long parentCid;
+	private String parentCid;
 	/**
 	 * 层级
 	 */
@@ -65,6 +66,7 @@ public class PmsCategoryEntity implements Serializable {
 	/**
 	 * 子分类, 不参与字段映射
 	 */
+	@JsonInclude(JsonInclude.Include.NON_EMPTY)
 	@TableField(exist = false)
 	private List<PmsCategoryEntity> children;
 }

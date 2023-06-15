@@ -5,11 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimall.product.entity.PmsCategoryEntity;
 import com.atguigu.gulimall.product.service.PmsCategoryService;
@@ -49,7 +45,7 @@ public class PmsCategoryController {
     public R info(@PathVariable("catId") Long catId){
 		PmsCategoryEntity pmsCategory = pmsCategoryService.getById(catId);
 
-        return R.ok().put("pmsCategory", pmsCategory);
+        return R.ok().put("data", pmsCategory);
     }
 
     /**
@@ -69,7 +65,7 @@ public class PmsCategoryController {
     @RequestMapping("/update")
     //@RequiresPermissions("product:pmscategory:update")
     public R update(@RequestBody PmsCategoryEntity pmsCategory){
-		pmsCategoryService.updateById(pmsCategory);
+		pmsCategoryService.updateDetail(pmsCategory);
 
         return R.ok();
     }

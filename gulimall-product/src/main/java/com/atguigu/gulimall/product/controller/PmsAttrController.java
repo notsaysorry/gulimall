@@ -3,6 +3,8 @@ package com.atguigu.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.gulimall.product.vo.PmsAttrRespVo;
+import com.atguigu.gulimall.product.vo.PmsAttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,6 +43,21 @@ public class PmsAttrController {
         return R.ok().put("page", page);
     }
 
+    @RequestMapping("/base/list/{categoryId}")
+    //@RequiresPermissions("product:pmsattr:list")
+    public R baseList(@RequestParam Map<String, Object> params, @PathVariable("categoryId") String categoryId){
+        PageUtils page = pmsAttrService.queryBasePage(params, categoryId);
+
+        return R.ok().put("page", page);
+    }
+
+    @RequestMapping("/sale/list/{categoryId}")
+    //@RequiresPermissions("product:pmsattr:list")
+    public R saleList(@RequestParam Map<String, Object> params, @PathVariable("categoryId") String categoryId){
+        PageUtils page = pmsAttrService.querySalePage(params, categoryId);
+
+        return R.ok().put("page", page);
+    }
 
     /**
      * 信息
@@ -48,9 +65,8 @@ public class PmsAttrController {
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:pmsattr:info")
     public R info(@PathVariable("attrId") Long attrId){
-		PmsAttrEntity pmsAttr = pmsAttrService.getById(attrId);
-
-        return R.ok().put("pmsAttr", pmsAttr);
+        PmsAttrRespVo attrInfo = pmsAttrService.getAttrInfo(attrId);
+        return R.ok().put("attr", attrInfo);
     }
 
     /**
@@ -58,8 +74,8 @@ public class PmsAttrController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:pmsattr:save")
-    public R save(@RequestBody PmsAttrEntity pmsAttr){
-		pmsAttrService.save(pmsAttr);
+    public R save(@RequestBody PmsAttrVo pmsAttrVo){
+		pmsAttrService.saveDetail(pmsAttrVo);
 
         return R.ok();
     }
@@ -69,9 +85,8 @@ public class PmsAttrController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:pmsattr:update")
-    public R update(@RequestBody PmsAttrEntity pmsAttr){
-		pmsAttrService.updateById(pmsAttr);
-
+    public R update(@RequestBody PmsAttrVo pmsAttrVo){
+        pmsAttrService.updateAttr(pmsAttrVo);
         return R.ok();
     }
 

@@ -3,7 +3,10 @@ package com.atguigu.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.gulimall.common.valid.AddGroup;
+import com.atguigu.gulimall.common.valid.UpdateGroup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import com.atguigu.gulimall.product.service.PmsBrandService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.common.utils.R;
 
+import javax.validation.Valid;
 
 
 /**
@@ -58,7 +62,7 @@ public class PmsBrandController {
      */
     @RequestMapping("/save")
     //@RequiresPermissions("product:pmsbrand:save")
-    public R save(@RequestBody PmsBrandEntity pmsBrand){
+    public R save(@Validated(value = AddGroup.class) @RequestBody PmsBrandEntity pmsBrand){
 		pmsBrandService.save(pmsBrand);
 
         return R.ok();
@@ -69,8 +73,8 @@ public class PmsBrandController {
      */
     @RequestMapping("/update")
     //@RequiresPermissions("product:pmsbrand:update")
-    public R update(@RequestBody PmsBrandEntity pmsBrand){
-		pmsBrandService.updateById(pmsBrand);
+    public R update(@Validated(value = UpdateGroup.class)@RequestBody PmsBrandEntity pmsBrand){
+		pmsBrandService.updateDetail(pmsBrand);
 
         return R.ok();
     }

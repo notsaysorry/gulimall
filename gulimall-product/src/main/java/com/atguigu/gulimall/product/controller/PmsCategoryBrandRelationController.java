@@ -1,14 +1,13 @@
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.atguigu.gulimall.product.entity.PmsCategoryEntity;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimall.product.entity.PmsCategoryBrandRelationEntity;
 import com.atguigu.gulimall.product.service.PmsCategoryBrandRelationService;
@@ -31,6 +30,19 @@ public class PmsCategoryBrandRelationController {
     private PmsCategoryBrandRelationService pmsCategoryBrandRelationService;
 
     /**
+     * 获得品牌对应的三级分类
+     * @param brandId
+     * @return
+     */
+    @GetMapping("/catelog/list")
+    public R catelogList(@RequestParam("brandId") String brandId) {
+        List<PmsCategoryBrandRelationEntity> data = pmsCategoryBrandRelationService
+                .list(new QueryWrapper<PmsCategoryBrandRelationEntity>().eq("brand_id", brandId));
+        return R.ok().put("data", data);
+    }
+
+
+    /**
      * 列表
      */
     @RequestMapping("/list")
@@ -40,6 +52,8 @@ public class PmsCategoryBrandRelationController {
 
         return R.ok().put("page", page);
     }
+
+
 
 
     /**
@@ -59,8 +73,7 @@ public class PmsCategoryBrandRelationController {
     @RequestMapping("/save")
     //@RequiresPermissions("product:pmscategorybrandrelation:save")
     public R save(@RequestBody PmsCategoryBrandRelationEntity pmsCategoryBrandRelation){
-		pmsCategoryBrandRelationService.save(pmsCategoryBrandRelation);
-
+		pmsCategoryBrandRelationService.saveDetail(pmsCategoryBrandRelation);
         return R.ok();
     }
 

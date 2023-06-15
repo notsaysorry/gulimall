@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.PmsAttrGroupEntity;
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface PmsAttrGroupService extends IService<PmsAttrGroupEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryPage(Map<String, Object> params, String catalogId);
+
+    void deleteAttrRelation(PmsAttrGroupRelationVo[] pmsAttrGroupRelationVos);
 }
 

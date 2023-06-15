@@ -1,7 +1,13 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +30,24 @@ public class PmsAttrAttrgroupRelationServiceImpl extends ServiceImpl<PmsAttrAttr
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public void saveAttrgroup(String attrId, String groupId) {
+        PmsAttrAttrgroupRelationEntity pmsAttrAttrgroupRelationEntity = new PmsAttrAttrgroupRelationEntity();
+        pmsAttrAttrgroupRelationEntity.setAttrId(attrId);
+        pmsAttrAttrgroupRelationEntity.setAttrGroupId(groupId);
+        baseMapper.insert(pmsAttrAttrgroupRelationEntity);
+    }
+
+    @Override
+    public void addRelation(List<PmsAttrGroupRelationVo> pmsAttrGroupRelationVos) {
+        List<PmsAttrAttrgroupRelationEntity> collect = pmsAttrGroupRelationVos.stream().map(item -> {
+            PmsAttrAttrgroupRelationEntity attrgroupRelationEntity = new PmsAttrAttrgroupRelationEntity();
+            BeanUtils.copyProperties(item, attrgroupRelationEntity);
+            return attrgroupRelationEntity;
+        }).collect(Collectors.toList());
+        this.saveBatch(collect);
     }
 
 }

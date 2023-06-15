@@ -1,9 +1,12 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.gulimall.product.vo.PmsAttrRespVo;
+import com.atguigu.gulimall.product.vo.PmsAttrVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.PmsAttrEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +19,19 @@ import java.util.Map;
 public interface PmsAttrService extends IService<PmsAttrEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    PageUtils queryBasePage(Map<String, Object> params, String categoryId);
+
+    PageUtils querySalePage(Map<String, Object> params, String categoryId);
+
+    void saveDetail(PmsAttrVo pmsAttrVo);
+
+    PmsAttrRespVo getAttrInfo(Long attrId);
+
+    void updateAttr(PmsAttrVo pmsAttrVo);
+
+    List<PmsAttrEntity> attrRelation(String groupId);
+
+    PageUtils attrNoRelation(Map<String, Object> params, String groupId);
 }
 

@@ -25,5 +25,9 @@ public interface PmsCategoryService extends IService<PmsCategoryEntity> {
      * @param ids
      */
     void deleteByIds(List<Long> ids);
+
+    String[] queryCatelogs(String catalogId);
+
+    void updateDetail(PmsCategoryEntity pmsCategory);
 }
 

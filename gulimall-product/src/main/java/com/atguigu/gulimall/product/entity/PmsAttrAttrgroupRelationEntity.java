@@ -23,15 +23,15 @@ public class PmsAttrAttrgroupRelationEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 属性id
 	 */
-	private Long attrId;
+	private String attrId;
 	/**
 	 * 属性分组id
 	 */
-	private Long attrGroupId;
+	private String attrGroupId;
 	/**
 	 * 属性组内排序
 	 */

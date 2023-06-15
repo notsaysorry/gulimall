@@ -23,15 +23,15 @@ public class PmsCategoryBrandRelationEntity implements Serializable {
 	 * 
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 品牌id
 	 */
-	private Long brandId;
+	private String brandId;
 	/**
 	 * 分类id
 	 */
-	private Long catelogId;
+	private String catelogId;
 	/**
 	 * 
 	 */
