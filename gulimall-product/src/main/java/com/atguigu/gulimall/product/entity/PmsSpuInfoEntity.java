@@ -24,7 +24,7 @@ public class PmsSpuInfoEntity implements Serializable {
 	 * 商品id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 商品名称
 	 */
@@ -36,11 +36,11 @@ public class PmsSpuInfoEntity implements Serializable {
 	/**
 	 * 所属分类id
 	 */
-	private Long catalogId;
+	private String catalogId;
 	/**
 	 * 品牌id
 	 */
-	private Long brandId;
+	private String brandId;
 	/**
 	 * 
 	 */

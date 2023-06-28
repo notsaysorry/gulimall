@@ -21,6 +21,20 @@ spring:
           filters:
             - RewritePath=/api/thirdpart(?<segment>.*), /$\{segment}
 
+        - id: member-route
+          uri: lb://gulimall-member
+          predicates:
+            - Path=/api/member/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
+        - id: ware-route
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>.*), /$\{segment}
+
         - id: admin-route
           uri: lb://gulimall-admin
           predicates:

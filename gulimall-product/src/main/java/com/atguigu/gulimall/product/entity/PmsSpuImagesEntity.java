@@ -23,11 +23,11 @@ public class PmsSpuImagesEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * spu_id
 	 */
-	private Long spuId;
+	private String spuId;
 	/**
 	 * 图片名
 	 */

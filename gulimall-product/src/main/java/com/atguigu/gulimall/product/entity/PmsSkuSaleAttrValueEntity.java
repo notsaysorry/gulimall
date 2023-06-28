@@ -23,15 +23,15 @@ public class PmsSkuSaleAttrValueEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * sku_id
 	 */
-	private Long skuId;
+	private String skuId;
 	/**
 	 * attr_id
 	 */
-	private Long attrId;
+	private String attrId;
 	/**
 	 * 销售属性名
 	 */

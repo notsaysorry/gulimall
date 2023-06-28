@@ -24,15 +24,15 @@ public class WmsPurchaseDetailEntity implements Serializable {
 	 * 
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 采购单id
 	 */
-	private Long purchaseId;
+	private String purchaseId;
 	/**
 	 * 采购商品id
 	 */
-	private Long skuId;
+	private String skuId;
 	/**
 	 * 采购数量
 	 */
@@ -44,7 +44,7 @@ public class WmsPurchaseDetailEntity implements Serializable {
 	/**
 	 * 仓库id
 	 */
-	private Long wareId;
+	private String wareId;
 	/**
 	 * 状态[0新建，1已分配，2正在采购，3已完成，4采购失败]
 	 */

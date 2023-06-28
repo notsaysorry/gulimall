@@ -23,15 +23,15 @@ public class WmsWareSkuEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * sku_id
 	 */
-	private Long skuId;
+	private String skuId;
 	/**
 	 * 仓库id
 	 */
-	private Long wareId;
+	private String wareId;
 	/**
 	 * 库存数
 	 */

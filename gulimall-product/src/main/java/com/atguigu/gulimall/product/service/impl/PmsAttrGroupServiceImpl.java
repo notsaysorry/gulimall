@@ -1,13 +1,21 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.dao.PmsAttrAttrgroupRelationDao;
+import com.atguigu.gulimall.product.entity.PmsAttrAttrgroupRelationEntity;
+import com.atguigu.gulimall.product.entity.PmsAttrEntity;
+import com.atguigu.gulimall.product.service.PmsAttrService;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
+import com.atguigu.gulimall.product.vo.PmsAttrGroupWithAttrsVo;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -24,6 +32,10 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupDao, PmsAtt
 
     @Autowired
     private PmsAttrGroupDao pmsAttrGroupDao;
+    @Autowired
+    private PmsAttrAttrgroupRelationDao pmsAttrAttrgroupRelationDao;
+    @Autowired
+    private PmsAttrService pmsAttrService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -63,6 +75,20 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupDao, PmsAtt
     public void deleteAttrRelation(PmsAttrGroupRelationVo[] pmsAttrGroupRelationVos) {
         List<PmsAttrGroupRelationVo> attrGroupRelationList = Arrays.asList(pmsAttrGroupRelationVos);
         pmsAttrGroupDao.deleteAttrRelationBatch(attrGroupRelationList);
+    }
+
+    @Override
+    public List<PmsAttrGroupWithAttrsVo> attrGroupWithAttrs(String catId) {
+        List<PmsAttrGroupEntity> relationEntities = pmsAttrGroupDao.selectList(new QueryWrapper<PmsAttrGroupEntity>()
+                .eq("catelog_id", catId));
+        List<PmsAttrGroupWithAttrsVo> collect = relationEntities.stream().map(item -> {
+            PmsAttrGroupWithAttrsVo pmsAttrGroupWithAttrsVo = new PmsAttrGroupWithAttrsVo();
+            BeanUtils.copyProperties(item, pmsAttrGroupWithAttrsVo);
+            List<PmsAttrEntity> pmsAttrEntities = pmsAttrService.attrRelation(item.getAttrGroupId());
+            pmsAttrGroupWithAttrsVo.setAttrs(pmsAttrEntities);
+            return pmsAttrGroupWithAttrsVo;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
 }

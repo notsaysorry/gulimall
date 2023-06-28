@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.PmsProductAttrValueEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ import java.util.Map;
 public interface PmsProductAttrValueService extends IService<PmsProductAttrValueEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    List<PmsProductAttrValueEntity> listForSpu(String spuId);
+
+    void updateSpuAttr(String spuId, List<PmsProductAttrValueEntity> productAttrValueEntities);
 }
 

@@ -24,11 +24,11 @@ public class SpuBoundsEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 
 	 */
-	private Long spuId;
+	private String spuId;
 	/**
 	 * 成长积分
 	 */

@@ -24,11 +24,11 @@ public class PmsSkuInfoEntity implements Serializable {
 	 * skuId
 	 */
 	@TableId
-	private Long skuId;
+	private String skuId;
 	/**
 	 * spuId
 	 */
-	private Long spuId;
+	private String spuId;
 	/**
 	 * sku名称
 	 */
@@ -40,11 +40,11 @@ public class PmsSkuInfoEntity implements Serializable {
 	/**
 	 * 所属分类id
 	 */
-	private Long catalogId;
+	private String catalogId;
 	/**
 	 * 品牌id
 	 */
-	private Long brandId;
+	private String brandId;
 	/**
 	 * 默认图片
 	 */

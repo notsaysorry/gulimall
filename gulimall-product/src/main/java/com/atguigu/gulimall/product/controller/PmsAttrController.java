@@ -1,8 +1,11 @@
 package com.atguigu.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.atguigu.gulimall.product.entity.PmsProductAttrValueEntity;
+import com.atguigu.gulimall.product.service.PmsProductAttrValueService;
 import com.atguigu.gulimall.product.vo.PmsAttrRespVo;
 import com.atguigu.gulimall.product.vo.PmsAttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,16 @@ import com.atguigu.gulimall.common.utils.R;
 public class PmsAttrController {
     @Autowired
     private PmsAttrService pmsAttrService;
+    @Autowired
+    private PmsProductAttrValueService productAttrValueService;
+
+    @RequestMapping("/base/listforspu/{spuId}")
+    //@RequiresPermissions("product:pmsattr:list")
+    public R listForSpu(@PathVariable("spuId") String spuId){
+        List<PmsProductAttrValueEntity> attrValueEntities = productAttrValueService.listForSpu(spuId);
+
+        return R.ok().put("data", attrValueEntities);
+    }
 
     /**
      * 列表
@@ -87,6 +100,13 @@ public class PmsAttrController {
     //@RequiresPermissions("product:pmsattr:update")
     public R update(@RequestBody PmsAttrVo pmsAttrVo){
         pmsAttrService.updateAttr(pmsAttrVo);
+        return R.ok();
+    }
+
+    @RequestMapping("/update/{spuId}")
+    //@RequiresPermissions("product:pmsattr:update")
+    public R updateSpuAttr(@PathVariable("spuId") String spuId,  @RequestBody List<PmsProductAttrValueEntity> productAttrValueEntities){
+        productAttrValueService.updateSpuAttr(spuId, productAttrValueEntities);
         return R.ok();
     }
 

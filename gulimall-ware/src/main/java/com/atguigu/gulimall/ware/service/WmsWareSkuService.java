@@ -16,5 +16,7 @@ import java.util.Map;
 public interface WmsWareSkuService extends IService<WmsWareSkuEntity> {
 
     PageUtils queryPage(Map<String, Object> params);
+
+    void addStock(String skuId, Integer skuNum, String wareId);
 }
 

@@ -3,8 +3,11 @@ package com.atguigu.gulimall.product.controller;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.atguigu.gulimall.product.entity.PmsBrandEntity;
 import com.atguigu.gulimall.product.entity.PmsCategoryEntity;
+import com.atguigu.gulimall.product.vo.PmsBrandVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +56,20 @@ public class PmsCategoryBrandRelationController {
         return R.ok().put("page", page);
     }
 
+    /**
+     * 查询当前分类下所有的分类
+     */
+    @RequestMapping("/brands/list")
+    public R list(@RequestParam(value = "catId", required = true) String catId){
+        List<PmsBrandEntity> brandEntities = pmsCategoryBrandRelationService.queryBrands(catId);
+        List<PmsBrandVo> brandVos = brandEntities.stream().map(item -> {
+            PmsBrandVo pmsBrandVo = new PmsBrandVo();
+            pmsBrandVo.setBrandId(item.getBrandId());
+            pmsBrandVo.setBrandName(item.getName());
+            return pmsBrandVo;
+        }).collect(Collectors.toList());
+        return R.ok().put("data", brandVos);
+    }
 
 
 

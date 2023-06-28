@@ -23,7 +23,7 @@ public class WmsWareInfoEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 仓库名
 	 */

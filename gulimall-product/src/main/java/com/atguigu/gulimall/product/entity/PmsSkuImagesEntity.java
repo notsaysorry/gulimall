@@ -23,11 +23,11 @@ public class PmsSkuImagesEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * sku_id
 	 */
-	private Long skuId;
+	private String skuId;
 	/**
 	 * 图片地址
 	 */

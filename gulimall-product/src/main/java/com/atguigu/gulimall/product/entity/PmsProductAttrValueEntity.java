@@ -23,15 +23,15 @@ public class PmsProductAttrValueEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 商品id
 	 */
-	private Long spuId;
+	private String spuId;
 	/**
 	 * 属性id
 	 */
-	private Long attrId;
+	private String attrId;
 	/**
 	 * 属性名
 	 */

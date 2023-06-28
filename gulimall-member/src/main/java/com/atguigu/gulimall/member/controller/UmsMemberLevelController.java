@@ -47,10 +47,10 @@ public class UmsMemberLevelController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:umsmemberlevel:info")
-    public R info(@PathVariable("id") Long id){
+    public R info(@PathVariable("id") String id){
 		UmsMemberLevelEntity umsMemberLevel = umsMemberLevelService.getById(id);
 
-        return R.ok().put("umsMemberLevel", umsMemberLevel);
+        return R.ok().put("memberLevel", umsMemberLevel);
     }
 
     /**

@@ -24,11 +24,11 @@ public class WmsPurchaseEntity implements Serializable {
 	 * 采购单id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 采购人id
 	 */
-	private Long assigneeId;
+	private String assigneeId;
 	/**
 	 * 采购人名
 	 */
@@ -48,7 +48,7 @@ public class WmsPurchaseEntity implements Serializable {
 	/**
 	 * 仓库id
 	 */
-	private Long wareId;
+	private String wareId;
 	/**
 	 * 总金额
 	 */

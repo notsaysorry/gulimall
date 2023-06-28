@@ -26,4 +26,9 @@ public class PmsSpuInfoDescServiceImpl extends ServiceImpl<PmsSpuInfoDescDao, Pm
         return new PageUtils(page);
     }
 
+    @Override
+    public void saveSpuDesc(PmsSpuInfoDescEntity pmsSpuInfoDescEntity) {
+        this.baseMapper.insert(pmsSpuInfoDescEntity);
+    }
+
 }

@@ -10,10 +10,6 @@
     <artifactId>gulimall-ware</artifactId>
     <name>gulimall-ware</name>
     <description>仓储模块</description>
-    <properties>
-        <java.version>17</java.version>
-        <spring-cloud.version>2021.0.7</spring-cloud.version>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.atguigu.gulimall</groupId>
@@ -40,17 +36,6 @@
             <version>1.18.12</version>
         </dependency>
     </dependencies>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>${spring-cloud.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <build>
         <plugins>

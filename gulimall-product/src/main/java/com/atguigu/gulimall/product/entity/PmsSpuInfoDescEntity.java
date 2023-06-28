@@ -23,7 +23,7 @@ public class PmsSpuInfoDescEntity implements Serializable {
 	 * 商品id
 	 */
 	@TableId
-	private Long spuId;
+	private String spuId;
 	/**
 	 * 商品介绍
 	 */

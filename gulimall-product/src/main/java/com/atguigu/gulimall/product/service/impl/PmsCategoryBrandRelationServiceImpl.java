@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.dao.PmsBrandDao;
 import com.atguigu.gulimall.product.entity.PmsBrandEntity;
 import com.atguigu.gulimall.product.entity.PmsCategoryEntity;
 import com.atguigu.gulimall.product.service.PmsBrandService;
@@ -7,7 +8,11 @@ import com.atguigu.gulimall.product.service.PmsCategoryService;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -27,6 +32,10 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
     private PmsCategoryService pmsCategoryService;
     @Autowired
     private PmsBrandService pmsBrandService;
+    @Autowired
+    private PmsCategoryBrandRelationDao pmsCategoryBrandRelationDao;
+    @Autowired
+    private PmsBrandDao pmsBrandDao;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -69,6 +78,17 @@ public class PmsCategoryBrandRelationServiceImpl extends ServiceImpl<PmsCategory
                 new UpdateWrapper<PmsCategoryBrandRelationEntity>().eq("catelog_id", categoryId));
 
 
+    }
+
+    @Override
+    public List<PmsBrandEntity> queryBrands(String catId) {
+        List<PmsCategoryBrandRelationEntity> brandRelationEntities = pmsCategoryBrandRelationDao.selectList(new QueryWrapper<PmsCategoryBrandRelationEntity>().eq("catelog_id", catId));
+        List<PmsBrandEntity> brandEntities = brandRelationEntities.stream().map(item -> {
+            String brandId = item.getBrandId();
+            PmsBrandEntity brand = pmsBrandDao.selectOne(new QueryWrapper<PmsBrandEntity>().eq("brand_id", brandId));
+            return brand;
+        }).collect(Collectors.toList());
+        return brandEntities;
     }
 
 }

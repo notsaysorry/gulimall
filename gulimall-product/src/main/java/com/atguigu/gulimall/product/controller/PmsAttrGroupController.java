@@ -9,6 +9,7 @@ import com.atguigu.gulimall.product.service.PmsAttrAttrgroupRelationService;
 import com.atguigu.gulimall.product.service.PmsAttrService;
 import com.atguigu.gulimall.product.service.PmsCategoryService;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
+import com.atguigu.gulimall.product.vo.PmsAttrGroupWithAttrsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +55,13 @@ public class PmsAttrGroupController {
     public R attrRelation(@RequestBody List<PmsAttrGroupRelationVo> pmsAttrGroupRelationVos){
         pmsAttrAttrgroupRelationService.addRelation(pmsAttrGroupRelationVos);
         return R.ok();
+    }
+
+
+    @RequestMapping("/{catId}/withattr")
+    public R attrGroupWithAttrs(@PathVariable("catId") String catId){
+        List<PmsAttrGroupWithAttrsVo> attrGroupWithAttrsVoList = pmsAttrGroupService.attrGroupWithAttrs(catId);
+        return R.ok().put("data", attrGroupWithAttrsVoList);
     }
 
     /**

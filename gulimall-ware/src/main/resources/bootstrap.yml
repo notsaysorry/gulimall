@@ -1,0 +1,23 @@
+server:
+  port: 9000
+
+spring:
+  cloud:
+    nacos:
+      # Nacos 作为注册中心的配置项，对应 NacosDiscoveryProperties 配置类
+      discovery:
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+      config:
+        server-addr: 127.0.0.1:8848 #Nacos作为配置中心地址
+        file-extension: yml #指定yml格式的配置
+        namespace: f098a65c-6e0d-43a9-8b76-f63bdc3e036b
+        ext-config:
+          - dataId: datasource.yml
+            group: dev
+          - dataId: mybatis.yml
+            group: dev
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  application:
+    name: gulimall-ware

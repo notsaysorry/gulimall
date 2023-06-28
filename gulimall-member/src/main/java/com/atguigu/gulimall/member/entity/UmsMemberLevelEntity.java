@@ -24,7 +24,7 @@ public class UmsMemberLevelEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * 等级名称
 	 */
