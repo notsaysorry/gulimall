@@ -10,7 +10,7 @@ spring:
         - id: product-route
           uri: lb://gulimall-product
           predicates:
-            - Path=/api/product/**
+            - Path=/api/product/**,/hello
           filters:
             - RewritePath=/api/?(?<segment>.*), /$\{segment}
 
@@ -43,3 +43,7 @@ spring:
             - RewritePath=/api/?(?<segment>.*), /gulimall-admin/$\{segment}
 
 
+        - id: gulimall-host-route
+          uri: lb://gulimall-product
+          predicates:
+            - Host=**.gulimall.com,gulimall.com

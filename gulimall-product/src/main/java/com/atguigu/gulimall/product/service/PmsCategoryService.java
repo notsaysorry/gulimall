@@ -1,5 +1,6 @@
 package com.atguigu.gulimall.product.service;
 
+import com.atguigu.gulimall.product.vo.Catalog2Vo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.PmsCategoryEntity;
@@ -29,5 +30,9 @@ public interface PmsCategoryService extends IService<PmsCategoryEntity> {
     String[] queryCatelogs(String catalogId);
 
     void updateDetail(PmsCategoryEntity pmsCategory);
+
+    List<PmsCategoryEntity> getLevel1Category();
+
+    Map<String, List<Catalog2Vo>> catalogJson();
 }
 

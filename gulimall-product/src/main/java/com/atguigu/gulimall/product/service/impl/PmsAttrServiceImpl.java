@@ -226,4 +226,9 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrDao, PmsAttrEntity> i
         return new PageUtils(page);
     }
 
+    @Override
+    public List<String> querySearchAttr(List<String> attrIdList) {
+        return this.baseMapper.querySearchAttr(attrIdList);
+    }
+
 }

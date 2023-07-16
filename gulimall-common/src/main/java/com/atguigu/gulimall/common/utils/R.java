@@ -1,5 +1,8 @@
 package com.atguigu.gulimall.common.utils;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +15,22 @@ import java.util.Map;
  */
 public class R extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
-	
+
+
+	public<T> T getData(TypeReference<T> reference) {
+		Object data = get("data");
+		String s = JSON.toJSONString(data);
+		T t = JSON.parseObject(s, reference);
+		return t;
+	}
+
+	public void setData(Object data) {
+		put("data", data);
+	}
+
+
+
+
 	public R() {
 		put("code", 0);
 	}

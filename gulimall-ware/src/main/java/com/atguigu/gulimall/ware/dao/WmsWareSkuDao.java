@@ -15,4 +15,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface WmsWareSkuDao extends BaseMapper<WmsWareSkuEntity> {
 
     void updateStock(String skuId, Integer skuNum, String wareId);
+
+    Long queryStock(String skuId);
 }

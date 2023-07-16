@@ -33,5 +33,7 @@ public interface PmsAttrService extends IService<PmsAttrEntity> {
     List<PmsAttrEntity> attrRelation(String groupId);
 
     PageUtils attrNoRelation(Map<String, Object> params, String groupId);
+
+    List<String> querySearchAttr(List<String> attrIdList);
 }
 

@@ -1,8 +1,10 @@
 package com.atguigu.gulimall.ware.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import com.atguigu.gulimall.common.to.SkuHasStockTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,18 @@ import com.atguigu.gulimall.common.utils.R;
 public class WmsWareSkuController {
     @Autowired
     private WmsWareSkuService wmsWareSkuService;
+
+    /**
+     * 列表
+     */
+    @RequestMapping("/hasstock")
+    public R hasStock(@RequestBody List<String> skuIds){
+        List<SkuHasStockTo> skuHasStockTos = wmsWareSkuService.hasStock(skuIds);
+        R ok = R.ok();
+        ok.setData(skuHasStockTos);
+        return ok;
+    }
+
 
     /**
      * 列表

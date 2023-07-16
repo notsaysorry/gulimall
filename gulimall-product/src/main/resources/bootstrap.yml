@@ -16,8 +16,20 @@ spring:
             group: dev
           - dataId: mybatis.yml
             group: dev
+          - dataId: redis.yml
+            group: dev
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 
   application:
     name: gulimall-product
+
+  thymeleaf:
+    cache: false
+
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000 #毫秒为单位
+      use-key-prefix: true #默认使用缓存分区为前缀
+      cache-null-values: true #缓存空值，防止缓存穿透
