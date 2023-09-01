@@ -6,6 +6,7 @@ import com.atguigu.gulimall.product.entity.PmsAttrEntity;
 import com.atguigu.gulimall.product.service.PmsAttrService;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupWithAttrsVo;
+import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,12 @@ public class PmsAttrGroupServiceImpl extends ServiceImpl<PmsAttrGroupDao, PmsAtt
             return pmsAttrGroupWithAttrsVo;
         }).collect(Collectors.toList());
         return collect;
+    }
+
+    @Override
+    public List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(String spuId, String catalogId) {
+        List<SpuItemAttrGroupVo> spuItemAttrGroupVos = pmsAttrGroupDao.getAttrGroupWithAttrsBySpuId(spuId, catalogId);
+        return spuItemAttrGroupVos;
     }
 
 }

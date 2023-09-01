@@ -2,6 +2,7 @@ package com.atguigu.gulimall.product.service;
 
 import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupWithAttrsVo;
+import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.atguigu.gulimall.common.utils.PageUtils;
 import com.atguigu.gulimall.product.entity.PmsAttrGroupEntity;
@@ -25,5 +26,7 @@ public interface PmsAttrGroupService extends IService<PmsAttrGroupEntity> {
     void deleteAttrRelation(PmsAttrGroupRelationVo[] pmsAttrGroupRelationVos);
 
     List<PmsAttrGroupWithAttrsVo> attrGroupWithAttrs(String catId);
+
+    List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(String spuId, String catalogId);
 }
 

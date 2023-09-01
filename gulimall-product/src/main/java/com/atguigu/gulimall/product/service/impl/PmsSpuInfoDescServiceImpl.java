@@ -31,4 +31,9 @@ public class PmsSpuInfoDescServiceImpl extends ServiceImpl<PmsSpuInfoDescDao, Pm
         this.baseMapper.insert(pmsSpuInfoDescEntity);
     }
 
+    @Override
+    public PmsSpuInfoDescEntity getDescBySpuId(String spuId) {
+        return this.baseMapper.selectById(spuId);
+    }
+
 }

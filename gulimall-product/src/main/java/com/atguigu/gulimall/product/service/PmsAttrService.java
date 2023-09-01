@@ -26,7 +26,7 @@ public interface PmsAttrService extends IService<PmsAttrEntity> {
 
     void saveDetail(PmsAttrVo pmsAttrVo);
 
-    PmsAttrRespVo getAttrInfo(Long attrId);
+    PmsAttrRespVo getAttrInfo(String attrId);
 
     void updateAttr(PmsAttrVo pmsAttrVo);
 

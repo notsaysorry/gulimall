@@ -1,0 +1,13 @@
+logging:
+  level:
+    com.atguigu.gulimall: debug
+spring:
+  session:
+    store-type: redis
+  main:
+    allow-bean-definition-overriding: true
+
+server:
+  servlet:
+    session:
+      timeout: 30m

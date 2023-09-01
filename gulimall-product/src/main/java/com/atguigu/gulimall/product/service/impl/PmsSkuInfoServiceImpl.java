@@ -1,7 +1,20 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.atguigu.gulimall.product.entity.PmsSkuImagesEntity;
+import com.atguigu.gulimall.product.entity.PmsSpuInfoDescEntity;
+import com.atguigu.gulimall.product.service.*;
+import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
+import com.atguigu.gulimall.product.vo.SkuItemVo;
+import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -10,11 +23,21 @@ import com.atguigu.gulimall.common.utils.Query;
 
 import com.atguigu.gulimall.product.dao.PmsSkuInfoDao;
 import com.atguigu.gulimall.product.entity.PmsSkuInfoEntity;
-import com.atguigu.gulimall.product.service.PmsSkuInfoService;
 
 
 @Service("pmsSkuInfoService")
 public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoDao, PmsSkuInfoEntity> implements PmsSkuInfoService {
+
+    @Autowired
+    private PmsSkuImagesService skuImagesService;
+    @Autowired
+    private PmsSpuInfoDescService spuInfoDescService;
+    @Autowired
+    private PmsAttrGroupService attrGroupService;
+    @Autowired
+    private PmsSkuSaleAttrValueService skuSaleAttrValueService;
+    @Autowired
+    private ThreadPoolExecutor threadPoolExecutor;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -24,6 +47,48 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoDao, PmsSkuInfo
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public SkuItemVo item(String skuId) throws ExecutionException, InterruptedException {
+        SkuItemVo skuItemVo = new SkuItemVo();
+
+
+        CompletableFuture<PmsSkuInfoEntity> SkuInfoFuture = CompletableFuture.supplyAsync(() -> {
+            // 1、sku基本信息获取
+            PmsSkuInfoEntity skuInfoEntity = this.baseMapper.selectById(skuId);
+            skuItemVo.setInfo(skuInfoEntity);
+            return skuInfoEntity;
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> skuImagesFuture = CompletableFuture.runAsync(() -> {
+            // 2、sku图片信息
+            List<PmsSkuImagesEntity> skuImagesEntityList = skuImagesService.getImagesBySkuId(skuId);
+            skuItemVo.setImages(skuImagesEntityList);
+        }, threadPoolExecutor);
+
+        CompletableFuture<Void> skuItemSaleFuture = SkuInfoFuture.thenAcceptAsync((res) -> {
+            // 3、获取spu的销售属性组合
+            List<SkuItemSaleAttrVo> skuItemSaleAttrVos = skuSaleAttrValueService.getSaleAttrsBySpuId(res.getSpuId());
+            skuItemVo.setSaleAttr(skuItemSaleAttrVos);
+        }, threadPoolExecutor);
+
+
+
+        CompletableFuture<Void> spuInfoFuture = SkuInfoFuture.thenAcceptAsync((res) -> {
+            // 4、获取spu的介绍
+            PmsSpuInfoDescEntity spuInfoDescEntity = spuInfoDescService.getDescBySpuId(res.getSpuId());
+            skuItemVo.setDesc(spuInfoDescEntity);
+        }, threadPoolExecutor);
+
+
+        CompletableFuture<Void> spuItemAttrFuture = SkuInfoFuture.thenAcceptAsync((res) -> {
+            // 5、获取spu的规格参数信息
+            List<SpuItemAttrGroupVo> spuItemAttrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(), res.getCatalogId());
+            skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
+        }, threadPoolExecutor);
+        CompletableFuture.allOf(skuImagesFuture, skuItemSaleFuture, spuInfoFuture, spuItemAttrFuture).get();
+        return skuItemVo;
     }
 
 }

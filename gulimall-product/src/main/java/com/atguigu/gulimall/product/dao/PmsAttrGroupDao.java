@@ -2,6 +2,7 @@ package com.atguigu.gulimall.product.dao;
 
 import com.atguigu.gulimall.product.entity.PmsAttrGroupEntity;
 import com.atguigu.gulimall.product.vo.PmsAttrGroupRelationVo;
+import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -19,4 +20,6 @@ import java.util.List;
 public interface PmsAttrGroupDao extends BaseMapper<PmsAttrGroupEntity> {
 
     void deleteAttrRelationBatch(@Param("attrGroupRelationList") List<PmsAttrGroupRelationVo> attrGroupRelationList);
+
+    List<SpuItemAttrGroupVo> getAttrGroupWithAttrsBySpuId(@Param("spuId") String spuId, @Param("catalogId") String catalogId);
 }

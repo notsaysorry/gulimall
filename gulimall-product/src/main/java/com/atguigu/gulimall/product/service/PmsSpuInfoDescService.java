@@ -18,5 +18,7 @@ public interface PmsSpuInfoDescService extends IService<PmsSpuInfoDescEntity> {
     PageUtils queryPage(Map<String, Object> params);
 
     void saveSpuDesc(PmsSpuInfoDescEntity pmsSpuInfoDescEntity);
+
+    PmsSpuInfoDescEntity getDescBySpuId(String spuId);
 }
 

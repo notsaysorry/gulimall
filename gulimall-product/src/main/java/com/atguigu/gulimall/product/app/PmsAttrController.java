@@ -76,7 +76,7 @@ public class PmsAttrController {
      */
     @RequestMapping("/info/{attrId}")
     //@RequiresPermissions("product:pmsattr:info")
-    public R info(@PathVariable("attrId") Long attrId){
+    public R info(@PathVariable("attrId") String attrId){
         PmsAttrRespVo attrInfo = pmsAttrService.getAttrInfo(attrId);
         return R.ok().put("attr", attrInfo);
     }

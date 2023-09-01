@@ -146,7 +146,7 @@ public class PmsAttrServiceImpl extends ServiceImpl<PmsAttrDao, PmsAttrEntity> i
     }
 
     @Override
-    public PmsAttrRespVo getAttrInfo(Long attrId) {
+    public PmsAttrRespVo getAttrInfo(String attrId) {
         PmsAttrEntity pmsAttrEntity = this.getById(attrId);
         PmsAttrRespVo pmsAttrRespVo = new PmsAttrRespVo();
         BeanUtils.copyProperties(pmsAttrEntity, pmsAttrRespVo);
