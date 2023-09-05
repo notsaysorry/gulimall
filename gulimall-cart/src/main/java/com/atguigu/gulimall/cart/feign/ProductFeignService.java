@@ -35,4 +35,11 @@ public interface ProductFeignService {
     @GetMapping(value = "/product/pmsskusaleattrvalue/stringList/{skuId}")
     List<String> getSkuSaleAttrValues(@PathVariable("skuId") String skuId);
 
+    /**
+     * 根据skuId查询当前商品的最新价格
+     * @param skuId
+     * @return
+     */
+    @GetMapping(value = "/product/pmsskuinfo/{skuId}/price")
+    BigDecimal getPrice(@PathVariable("skuId") String skuId);
 }

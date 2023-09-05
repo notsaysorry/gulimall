@@ -1,6 +1,8 @@
 package com.atguigu.gulimall.member.service.impl;
 
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -24,6 +26,13 @@ public class UmsMemberReceiveAddressServiceImpl extends ServiceImpl<UmsMemberRec
         );
 
         return new PageUtils(page);
+    }
+
+    @Override
+    public List<UmsMemberReceiveAddressEntity> getAddress(String memberId) {
+        List<UmsMemberReceiveAddressEntity> addressList = this.baseMapper.selectList
+                (new QueryWrapper<UmsMemberReceiveAddressEntity>().eq("member_id", memberId));
+        return addressList;
     }
 
 }

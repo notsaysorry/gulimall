@@ -193,6 +193,37 @@ public class CartServiceImpl implements CartService {
         cartOps.delete(skuId);
     }
 
+    @Override
+    public List<CartItemVo> getUserCartItems() {
+        List<CartItemVo> cartItemVoList = new ArrayList<>();
+        //获取当前用户登录的信息
+        UserInfoTo userInfoTo = CartInterceptor.toThreadLocal.get();
+        //如果用户未登录直接返回null
+        if (userInfoTo.getUserId() == null) {
+            return null;
+        } else {
+            //获取购物车项
+            String cartKey = CART_PREFIX + userInfoTo.getUserId();
+            //获取所有的
+            List<CartItemVo> cartItems = getCartItems(cartKey);
+            if (cartItems == null) {
+                return null;
+            }
+            //筛选出选中的
+            cartItemVoList = cartItems.stream()
+                    .filter(items -> items.getCheck())
+                    .map(item -> {
+                        //更新为最新的价格（查询数据库）
+                        BigDecimal price = productFeignService.getPrice(item.getSkuId());
+                        item.setPrice(price);
+                        return item;
+                    })
+                    .collect(Collectors.toList());
+        }
+
+        return cartItemVoList;
+    }
+
     /**
      * 获取到我们要操作的购物车
      * @return

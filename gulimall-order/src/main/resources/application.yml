@@ -9,5 +9,16 @@ spring:
     username: root
     password: root
 
+  session:
+    store-type: redis
+
 mybatis:
   mapperLocations: classpath:mapper/**/*.xml
+
+
+gulimall:
+  thread:
+    core-size: 50
+    max-size: 200
+    time: 10
+    queue-size: 10000

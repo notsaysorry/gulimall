@@ -38,4 +38,6 @@ public interface CartService {
     void changeItemCount(String skuId, Integer num);
 
     void deleteIdCartInfo(String skuId);
+
+    List<CartItemVo> getUserCartItems();
 }
