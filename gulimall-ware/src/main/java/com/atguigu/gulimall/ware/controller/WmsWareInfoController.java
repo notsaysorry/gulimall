@@ -3,12 +3,9 @@ package com.atguigu.gulimall.ware.controller;
 import java.util.Arrays;
 import java.util.Map;
 
+import com.atguigu.gulimall.ware.vo.FareVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimall.ware.entity.WmsWareInfoEntity;
 import com.atguigu.gulimall.ware.service.WmsWareInfoService;
@@ -29,6 +26,19 @@ import com.atguigu.gulimall.common.utils.R;
 public class WmsWareInfoController {
     @Autowired
     private WmsWareInfoService wmsWareInfoService;
+
+    /**
+     * 获取运费信息
+     * @return
+     */
+    @GetMapping(value = "/fare")
+    public R getFare(@RequestParam("addrId") String addrId) {
+
+        FareVo fare = wmsWareInfoService.getFare(addrId);
+        R ok = R.ok();
+        ok.setData(fare);
+        return ok;
+    }
 
     /**
      * 列表

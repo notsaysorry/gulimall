@@ -57,7 +57,7 @@ public class UmsMemberReceiveAddressController {
      */
     @RequestMapping("/info/{id}")
     //@RequiresPermissions("member:umsmemberreceiveaddress:info")
-    public R info(@PathVariable("id") Long id){
+    public R info(@PathVariable("id") String id){
 		UmsMemberReceiveAddressEntity umsMemberReceiveAddress = umsMemberReceiveAddressService.getById(id);
 
         return R.ok().put("umsMemberReceiveAddress", umsMemberReceiveAddress);
