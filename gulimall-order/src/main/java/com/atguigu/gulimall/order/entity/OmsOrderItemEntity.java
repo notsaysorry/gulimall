@@ -24,11 +24,11 @@ public class OmsOrderItemEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * order_id
 	 */
-	private Long orderId;
+	private String orderId;
 	/**
 	 * order_sn
 	 */
@@ -36,7 +36,7 @@ public class OmsOrderItemEntity implements Serializable {
 	/**
 	 * spu_id
 	 */
-	private Long spuId;
+	private String spuId;
 	/**
 	 * spu_name
 	 */
@@ -52,11 +52,11 @@ public class OmsOrderItemEntity implements Serializable {
 	/**
 	 * 商品分类id
 	 */
-	private Long categoryId;
+	private String categoryId;
 	/**
 	 * 商品sku编号
 	 */
-	private Long skuId;
+	private String skuId;
 	/**
 	 * 商品sku名字
 	 */

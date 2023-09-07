@@ -42,6 +42,10 @@ public class PmsSpuInfoEntity implements Serializable {
 	 */
 	private String brandId;
 	/**
+	 * 品牌名称
+	 */
+	private String brandName;
+	/**
 	 * 
 	 */
 	private BigDecimal weight;

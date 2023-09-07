@@ -23,5 +23,7 @@ public interface PmsSpuInfoService extends IService<PmsSpuInfoEntity> {
     PageUtils queryPageByCondition(Map<String, Object> params);
 
     void upSpu(String spuId);
+
+    PmsSpuInfoEntity getSpuInfoBySkuId(String skuId);
 }
 

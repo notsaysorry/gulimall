@@ -4,6 +4,8 @@ import com.atguigu.gulimall.ware.entity.WmsWareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 商品库存
  * 
@@ -17,4 +19,8 @@ public interface WmsWareSkuDao extends BaseMapper<WmsWareSkuEntity> {
     void updateStock(String skuId, Integer skuNum, String wareId);
 
     Long queryStock(String skuId);
+
+    List<String> listWareIdHasSkuStock(String skuId);
+
+    Long lockSkuStock(String skuId, String wareId, Integer num);
 }

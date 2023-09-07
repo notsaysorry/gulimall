@@ -27,6 +27,19 @@ public class PmsSpuInfoController {
     @Autowired
     private PmsSpuInfoService pmsSpuInfoService;
 
+    /**
+     * 根据skuId查询spu的信息
+     * @param skuId
+     * @return
+     */
+    @GetMapping(value = "/skuId/{skuId}")
+    public R getSpuInfoBySkuId(@PathVariable("skuId") String skuId) {
+
+        PmsSpuInfoEntity spuInfoEntity = pmsSpuInfoService.getSpuInfoBySkuId(skuId);
+        R ok = R.ok();
+        ok.setData(spuInfoEntity);
+        return ok;
+    }
 
     @PostMapping("/{spuId}/up")
     public R upSpu(@PathVariable("spuId") String spuId){

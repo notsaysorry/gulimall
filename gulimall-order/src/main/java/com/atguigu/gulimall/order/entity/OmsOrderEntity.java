@@ -28,7 +28,7 @@ public class OmsOrderEntity implements Serializable {
 	/**
 	 * member_id
 	 */
-	private Long memberId;
+	private String memberId;
 	/**
 	 * 订单号
 	 */
