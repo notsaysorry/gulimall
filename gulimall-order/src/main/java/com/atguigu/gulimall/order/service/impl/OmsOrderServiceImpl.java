@@ -1,6 +1,7 @@
 package com.atguigu.gulimall.order.service.impl;
 
 import com.alibaba.fastjson.TypeReference;
+import com.atguigu.gulimall.common.exception.NoStockException;
 import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.common.vo.MemberResponseVo;
 import com.atguigu.gulimall.order.config.LoginUserInterceptor;
@@ -23,6 +24,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -34,6 +36,7 @@ import com.atguigu.gulimall.common.utils.Query;
 import com.atguigu.gulimall.order.dao.OmsOrderDao;
 import com.atguigu.gulimall.order.entity.OmsOrderEntity;
 import com.atguigu.gulimall.order.service.OmsOrderService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -114,9 +117,19 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrderEntity
         Integer integration = memberResponseVo.getIntegration();
         confirmVo.setIntegration(integration);
         CompletableFuture.allOf(addressFuture,cartInfoFuture).get();
+
+        //4、价格数据自动计算
+
+        //防重令牌(防止表单重复提交)
+        //为用户设置一个token，三十分钟过期时间（存在redis）
+        String token = UUID.randomUUID().toString().replace("-", "");
+        redisTemplate.opsForValue().set(USER_ORDER_TOKEN_PREFIX+memberResponseVo.getId(),token,30, TimeUnit.MINUTES);
+        confirmVo.setOrderToken(token);
         return confirmVo;
     }
 
+//    @GlobalTransactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public SubmitOrderResponseVo submitOrder(OrderSubmitVo vo) {
         confirmVoThreadLocal.set(vo);
@@ -166,16 +179,21 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrderEntity
                 lockVo.setLocks(orderItemVos);
                 //调用远程锁定库存的方法
                 R r = wmsFeignService.orderLockStock(lockVo);
-
+                if (r.getCode() == 0) {
+                    //锁定成功
+                    responseVo.setOrder(order.getOrder());
+                    return responseVo;
+                } else {
+                    //锁定失败
+                    String msg = (String) r.get("msg");
+                    throw new NoStockException(msg);
+                }
             }else {
                 responseVo.setCode(2);
                 return responseVo;
 
             }
-
-
         }
-        return responseVo;
     }
 
     private OrderCreateTo createOrder() {
@@ -375,8 +393,13 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrderEntity
 
         //获取订单项信息
         List<OmsOrderItemEntity> orderItems = orderCreateTo.getOrderItems();
-        //批量保存订单项数据
-        orderItemService.saveBatch(orderItems);
+        try {
+            //批量保存订单项数据
+            orderItemService.saveBatch(orderItems);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+
     }
 
 

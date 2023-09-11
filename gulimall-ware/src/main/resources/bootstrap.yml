@@ -16,6 +16,8 @@ spring:
             group: dev
           - dataId: mybatis.yml
             group: dev
+          - dataId: rabbitmq.yml
+            group: dev
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
 

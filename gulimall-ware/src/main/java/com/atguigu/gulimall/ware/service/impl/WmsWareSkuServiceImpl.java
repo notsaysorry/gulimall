@@ -2,14 +2,24 @@ package com.atguigu.gulimall.ware.service.impl;
 
 import com.atguigu.gulimall.common.exception.NoStockException;
 import com.atguigu.gulimall.common.to.SkuHasStockTo;
+import com.atguigu.gulimall.common.to.mq.StockDetailTo;
+import com.atguigu.gulimall.common.to.mq.StockLockedTo;
 import com.atguigu.gulimall.common.utils.R;
+import com.atguigu.gulimall.ware.entity.WmsWareOrderTaskDetailEntity;
+import com.atguigu.gulimall.ware.entity.WmsWareOrderTaskEntity;
 import com.atguigu.gulimall.ware.feign.ProductFeignService;
+import com.atguigu.gulimall.ware.service.WmsWareOrderTaskDetailService;
+import com.atguigu.gulimall.ware.service.WmsWareOrderTaskService;
 import com.atguigu.gulimall.ware.vo.OrderItemVo;
 import com.atguigu.gulimall.ware.vo.WareSkuLockVo;
 import lombok.Data;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,15 +35,23 @@ import com.atguigu.gulimall.ware.entity.WmsWareSkuEntity;
 import com.atguigu.gulimall.ware.service.WmsWareSkuService;
 import org.springframework.transaction.annotation.Transactional;
 
-
+@RabbitListener(queues = "stock.release.stock.queue")
 @Service("wmsWareSkuService")
 public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSkuEntity> implements WmsWareSkuService {
 
     @Autowired
     private WmsWareSkuDao wareSkuDao;
+    @Autowired
+    private WmsWareOrderTaskService wareOrderTaskService;
+
+    @Autowired
+    private WmsWareOrderTaskDetailService wareOrderTaskDetailService;
 
     @Autowired
     private ProductFeignService productFeignService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -48,19 +66,19 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSku
     @Override
     public void addStock(String skuId, Integer skuNum, String wareId) {
         List<WmsWareSkuEntity> wareSkuEntities = this.baseMapper.selectList(new QueryWrapper<WmsWareSkuEntity>().eq("sku_id", skuId).eq("ware_id", wareId));
-        if (wareSkuEntities == null || wareSkuEntities.size() == 0){
+        if (wareSkuEntities == null || wareSkuEntities.size() == 0) {
             WmsWareSkuEntity wareSkuEntity = new WmsWareSkuEntity();
             wareSkuEntity.setSkuId(skuId);
             wareSkuEntity.setStock(skuNum);
             wareSkuEntity.setWareId(wareId);
             R skuInfo = productFeignService.info(skuId);
-            if (skuInfo.getCode() == 0){
-                Map<String, Object> skuInfoMap = (Map<String, Object>)skuInfo.get("pmsSkuInfo");
+            if (skuInfo.getCode() == 0) {
+                Map<String, Object> skuInfoMap = (Map<String, Object>) skuInfo.get("pmsSkuInfo");
                 wareSkuEntity.setSkuName((String) skuInfoMap.get("skuName"));
             }
             wareSkuEntity.setStockLocked(0);
             this.baseMapper.insert(wareSkuEntity);
-        }else {
+        } else {
             wareSkuDao.updateStock(skuId, skuNum, wareId);
         }
     }
@@ -71,7 +89,7 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSku
             Long stockNum = this.baseMapper.queryStock(skuId);
             SkuHasStockTo skuHasStockTo = new SkuHasStockTo();
             skuHasStockTo.setSkuId(skuId);
-            skuHasStockTo.setHasStock(stockNum == null ? false: stockNum > 0);
+            skuHasStockTo.setHasStock(stockNum == null ? false : stockNum > 0);
             return skuHasStockTo;
         }).collect(Collectors.toList());
         return collect;
@@ -80,9 +98,14 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSku
     @Transactional(rollbackFor = Exception.class)
     @Override
     public boolean orderLockStock(WareSkuLockVo vo) {
-
-
-
+        /**
+         * 保存库存工作单详情信息
+         * 追溯
+         */
+        WmsWareOrderTaskEntity wareOrderTaskEntity = new WmsWareOrderTaskEntity();
+        wareOrderTaskEntity.setOrderSn(vo.getOrderSn());
+        wareOrderTaskEntity.setCreateTime(new Date());
+        wareOrderTaskService.save(wareOrderTaskEntity);
         //1、按照下单的收货地址，找到一个就近仓库，锁定库存
         //2、找到每个商品在哪个仓库都有库存
         List<OrderItemVo> locks = vo.getLocks();
@@ -107,16 +130,32 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSku
 
             if (org.springframework.util.StringUtils.isEmpty(wareIds)) {
                 //没有任何仓库有这个商品的库存
-                throw new NoStockException(skuId);
+                throw new NoStockException(skuId, "库存不足");
             }
 
             //1、如果每一个商品都锁定成功,将当前商品锁定了几件的工作单记录发给MQ
             //2、锁定失败。前面保存的工作单信息都回滚了。发送出去的消息，即使要解锁库存，由于在数据库查不到指定的id，所有就不用解锁
             for (String wareId : wareIds) {
                 //锁定成功就返回1，失败就返回0
-                Long count = wareSkuDao.lockSkuStock(skuId,wareId,hasStock.getNum());
+                Long count = wareSkuDao.lockSkuStock(skuId, wareId, hasStock.getNum());
                 if (count == 1) {
                     skuStocked = true;
+                    WmsWareOrderTaskDetailEntity taskDetailEntity = new WmsWareOrderTaskDetailEntity();
+                    taskDetailEntity.setSkuId(skuId);
+                    taskDetailEntity.setSkuName("");
+                    taskDetailEntity.setSkuNum(hasStock.getNum());
+                    taskDetailEntity.setTaskId(wareOrderTaskEntity.getId());
+                    taskDetailEntity.setWareId(wareId);
+                    taskDetailEntity.setLockStatus(1);
+                    wareOrderTaskDetailService.save(taskDetailEntity);
+
+                    //告诉MQ库存锁定成功
+                    StockLockedTo lockedTo = new StockLockedTo();
+                    lockedTo.setId(wareOrderTaskEntity.getId());
+                    StockDetailTo detailTo = new StockDetailTo();
+                    BeanUtils.copyProperties(taskDetailEntity, detailTo);
+                    lockedTo.setDetailTo(detailTo);
+                    rabbitTemplate.convertAndSend("stock-event-exchange", "stock.locked", lockedTo);
                     break;
                 } else {
                     //当前仓库锁失败，重试下一个仓库
@@ -124,7 +163,7 @@ public class WmsWareSkuServiceImpl extends ServiceImpl<WmsWareSkuDao, WmsWareSku
             }
             if (skuStocked == false) {
                 //当前商品所有仓库都没有锁住
-                throw new NoStockException(skuId);
+                throw new NoStockException(skuId, "库存不足");
             }
         }
         //3、肯定全部都是锁定成功的

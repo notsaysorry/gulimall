@@ -24,7 +24,7 @@ public class OmsOrderEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * member_id
 	 */
@@ -36,7 +36,7 @@ public class OmsOrderEntity implements Serializable {
 	/**
 	 * 使用的优惠券
 	 */
-	private Long couponId;
+	private String couponId;
 	/**
 	 * create_time
 	 */

@@ -22,3 +22,7 @@ gulimall:
     max-size: 200
     time: 10
     queue-size: 10000
+
+logging:
+  level:
+    com.atguigu.gulimall: debug

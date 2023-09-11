@@ -3,6 +3,7 @@ package com.atguigu.gulimall.ware.dao;
 import com.atguigu.gulimall.ware.entity.WmsWareSkuEntity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -22,5 +23,5 @@ public interface WmsWareSkuDao extends BaseMapper<WmsWareSkuEntity> {
 
     List<String> listWareIdHasSkuStock(String skuId);
 
-    Long lockSkuStock(String skuId, String wareId, Integer num);
+    Long lockSkuStock(@Param("skuId") String skuId, @Param("wareId") String wareId, @Param("num") Integer num);
 }

@@ -23,11 +23,11 @@ public class WmsWareOrderTaskEntity implements Serializable {
 	 * id
 	 */
 	@TableId
-	private Long id;
+	private String id;
 	/**
 	 * order_id
 	 */
-	private Long orderId;
+	private String orderId;
 	/**
 	 * order_sn
 	 */
@@ -71,7 +71,7 @@ public class WmsWareOrderTaskEntity implements Serializable {
 	/**
 	 * 仓库id
 	 */
-	private Long wareId;
+	private String wareId;
 	/**
 	 * 工作单备注
 	 */
