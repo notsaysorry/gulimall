@@ -4,11 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.atguigu.gulimall.order.entity.OmsOrderEntity;
 import com.atguigu.gulimall.order.service.OmsOrderService;
@@ -29,6 +25,19 @@ import com.atguigu.gulimall.common.utils.R;
 public class OmsOrderController {
     @Autowired
     private OmsOrderService omsOrderService;
+
+    /**
+     * 根据订单编号查询订单状态
+     * @param orderSn
+     * @return
+     */
+    @GetMapping(value = "/status/{orderSn}")
+    public R getOrderStatus(@PathVariable("orderSn") String orderSn) {
+        OmsOrderEntity orderEntity = omsOrderService.getOrderByOrderSn(orderSn);
+        R ok = R.ok();
+        ok.setData(orderEntity);
+        return ok;
+    }
 
     /**
      * 列表

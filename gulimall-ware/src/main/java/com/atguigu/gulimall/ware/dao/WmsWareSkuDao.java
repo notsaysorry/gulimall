@@ -24,4 +24,6 @@ public interface WmsWareSkuDao extends BaseMapper<WmsWareSkuEntity> {
     List<String> listWareIdHasSkuStock(String skuId);
 
     Long lockSkuStock(@Param("skuId") String skuId, @Param("wareId") String wareId, @Param("num") Integer num);
+
+    void unLockStock(@Param("skuId") String skuId, @Param("wareId") String wareId, @Param("num") Integer num);
 }

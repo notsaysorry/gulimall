@@ -24,5 +24,9 @@ public interface OmsOrderService extends IService<OmsOrderEntity> {
     OrderConfirmVo confirmOrder() throws ExecutionException, InterruptedException;
 
     SubmitOrderResponseVo submitOrder(OrderSubmitVo vo);
+
+    OmsOrderEntity getOrderByOrderSn(String orderSn);
+
+    void closeOrder(OmsOrderEntity orderEntity);
 }
 

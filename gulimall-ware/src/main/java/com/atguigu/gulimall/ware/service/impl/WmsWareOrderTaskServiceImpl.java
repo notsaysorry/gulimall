@@ -26,4 +26,12 @@ public class WmsWareOrderTaskServiceImpl extends ServiceImpl<WmsWareOrderTaskDao
         return new PageUtils(page);
     }
 
+    @Override
+    public WmsWareOrderTaskEntity getOrderTaskByOrderSn(String orderSn) {
+
+        WmsWareOrderTaskEntity orderTaskEntity = this.baseMapper.selectOne(
+                new QueryWrapper<WmsWareOrderTaskEntity>().eq("order_sn", orderSn));
+        return orderTaskEntity;
+    }
+
 }
