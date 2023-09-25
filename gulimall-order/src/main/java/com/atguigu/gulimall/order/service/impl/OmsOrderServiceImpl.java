@@ -8,13 +8,16 @@ import com.atguigu.gulimall.common.vo.MemberResponseVo;
 import com.atguigu.gulimall.order.config.LoginUserInterceptor;
 import com.atguigu.gulimall.order.constant.OrderStatusEnum;
 import com.atguigu.gulimall.order.entity.OmsOrderItemEntity;
+import com.atguigu.gulimall.order.entity.OmsPaymentInfoEntity;
 import com.atguigu.gulimall.order.feign.CartFeignService;
 import com.atguigu.gulimall.order.feign.MemberFeignService;
 import com.atguigu.gulimall.order.feign.ProductFeignService;
 import com.atguigu.gulimall.order.feign.WmsFeignService;
 import com.atguigu.gulimall.order.service.OmsOrderItemService;
+import com.atguigu.gulimall.order.service.OmsPaymentInfoService;
 import com.atguigu.gulimall.order.to.OrderCreateTo;
 import com.atguigu.gulimall.order.vo.*;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
@@ -69,6 +72,8 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrderEntity
     private OmsOrderItemService orderItemService;
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private OmsPaymentInfoService paymentInfoService;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -235,6 +240,88 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderDao, OmsOrderEntity
             }
         }
 
+    }
+
+    @Override
+    public PayVo getOrderPay(String orderSn) {
+        PayVo payVo = new PayVo();
+        OmsOrderEntity orderInfo = this.getOrderByOrderSn(orderSn);
+
+        //保留两位小数点，向上取值
+        BigDecimal payAmount = orderInfo.getPayAmount().setScale(2, BigDecimal.ROUND_UP);
+        payVo.setTotal_amount(payAmount.toString());
+        payVo.setOut_trade_no(orderInfo.getOrderSn());
+
+        //查询订单项的数据
+        List<OmsOrderItemEntity> orderItemInfo = orderItemService.list(
+                new QueryWrapper<OmsOrderItemEntity>().eq("order_sn", orderSn));
+        OmsOrderItemEntity orderItemEntity = orderItemInfo.get(0);
+        payVo.setBody(orderItemEntity.getSkuAttrsVals());
+
+        payVo.setSubject(orderItemEntity.getSkuName());
+        return payVo;
+    }
+
+    /**
+     * 查询当前用户所有订单数据
+     * @param params
+     * @return
+     */
+    @Override
+    public PageUtils queryPageWithItem(Map<String, Object> params) {
+
+        MemberResponseVo memberResponseVo = LoginUserInterceptor.loginUser.get();
+
+        IPage<OmsOrderEntity> page = this.page(
+                new Query<OmsOrderEntity>().getPage(params),
+                new QueryWrapper<OmsOrderEntity>()
+                        .eq("member_id",memberResponseVo.getId()).orderByDesc("create_time")
+        );
+        List<OmsOrderEntity> records = page.getRecords();
+        if (records != null && records.size() > 0){
+            //遍历所有订单集合
+            List<OmsOrderEntity> orderEntityList = records.stream().map(order -> {
+                //根据订单号查询订单项里的数据
+                List<OmsOrderItemEntity> orderItemEntities = orderItemService.list(new QueryWrapper<OmsOrderItemEntity>()
+                        .eq("order_sn", order.getOrderSn()));
+                order.setOrderItemEntityList(orderItemEntities);
+                return order;
+            }).collect(Collectors.toList());
+            page.setRecords(orderEntityList);
+        }
+        return new PageUtils(page);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public String handlePayResult(PayAsyncVo asyncVo) {
+
+        //保存交易流水信息
+        OmsPaymentInfoEntity paymentInfo = new OmsPaymentInfoEntity();
+        paymentInfo.setOrderSn(asyncVo.getOut_trade_no());
+        paymentInfo.setAlipayTradeNo(asyncVo.getTrade_no());
+        paymentInfo.setTotalAmount(new BigDecimal(asyncVo.getBuyer_pay_amount()));
+        paymentInfo.setSubject(asyncVo.getBody());
+        paymentInfo.setPaymentStatus(asyncVo.getTrade_status());
+        paymentInfo.setCreateTime(new Date());
+        paymentInfo.setCallbackTime(asyncVo.getNotify_time());
+        //添加到数据库中
+        this.paymentInfoService.save(paymentInfo);
+
+        //修改订单状态
+        //获取当前状态
+        String tradeStatus = asyncVo.getTrade_status();
+
+        if (tradeStatus.equals("TRADE_SUCCESS") || tradeStatus.equals("TRADE_FINISHED")) {
+            //支付成功状态
+            String orderSn = asyncVo.getOut_trade_no(); //获取订单号
+            OmsOrderEntity omsOrderEntity = new OmsOrderEntity();
+            omsOrderEntity.setStatus(OrderStatusEnum.PAYED.getCode());
+            this.baseMapper.update(omsOrderEntity, new UpdateWrapper<OmsOrderEntity>().eq("order_sn", orderSn));
+//            this.updateOrderStatus(orderSn,OrderStatusEnum.PAYED.getCode());
+        }
+
+        return "success";
     }
 
     private OrderCreateTo createOrder() {

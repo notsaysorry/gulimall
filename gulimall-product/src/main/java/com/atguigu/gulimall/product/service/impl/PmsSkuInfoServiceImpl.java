@@ -1,8 +1,12 @@
 package com.atguigu.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.TypeReference;
+import com.atguigu.gulimall.common.utils.R;
 import com.atguigu.gulimall.product.entity.PmsSkuImagesEntity;
 import com.atguigu.gulimall.product.entity.PmsSpuInfoDescEntity;
+import com.atguigu.gulimall.product.feign.SeckillFeignService;
 import com.atguigu.gulimall.product.service.*;
+import com.atguigu.gulimall.product.vo.SeckillSkuVo;
 import com.atguigu.gulimall.product.vo.SkuItemSaleAttrVo;
 import com.atguigu.gulimall.product.vo.SkuItemVo;
 import com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo;
@@ -36,6 +40,8 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoDao, PmsSkuInfo
     private PmsAttrGroupService attrGroupService;
     @Autowired
     private PmsSkuSaleAttrValueService skuSaleAttrValueService;
+    @Autowired
+    private SeckillFeignService seckillFeignService;
     @Autowired
     private ThreadPoolExecutor threadPoolExecutor;
 
@@ -87,7 +93,26 @@ public class PmsSkuInfoServiceImpl extends ServiceImpl<PmsSkuInfoDao, PmsSkuInfo
             List<SpuItemAttrGroupVo> spuItemAttrGroupVos = attrGroupService.getAttrGroupWithAttrsBySpuId(res.getSpuId(), res.getCatalogId());
             skuItemVo.setGroupAttrs(spuItemAttrGroupVos);
         }, threadPoolExecutor);
-        CompletableFuture.allOf(skuImagesFuture, skuItemSaleFuture, spuInfoFuture, spuItemAttrFuture).get();
+
+        CompletableFuture<Void> seckillFuture = CompletableFuture.runAsync(() -> {
+            //3、远程调用查询当前sku是否参与秒杀优惠活动
+            R skuSeckilInfo = seckillFeignService.getSkuSeckilInfo(skuId);
+            if (skuSeckilInfo.getCode() == 0) {
+                //查询成功
+                SeckillSkuVo seckilInfoData = skuSeckilInfo.getData("data", new TypeReference<SeckillSkuVo>() {
+                });
+                skuItemVo.setSeckillSkuVo(seckilInfoData);
+
+                if (seckilInfoData != null) {
+                    long currentTime = System.currentTimeMillis();
+                    if (currentTime > seckilInfoData.getEndTime()) {
+                        skuItemVo.setSeckillSkuVo(null);
+                    }
+                }
+            }
+        }, threadPoolExecutor);
+
+        CompletableFuture.allOf(skuImagesFuture, skuItemSaleFuture, spuInfoFuture, spuItemAttrFuture, seckillFuture).get();
         return skuItemVo;
     }
 

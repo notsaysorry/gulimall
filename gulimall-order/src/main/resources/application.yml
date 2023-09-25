@@ -12,6 +12,9 @@ spring:
   session:
     store-type: redis
 
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+
 mybatis:
   mapperLocations: classpath:mapper/**/*.xml
 

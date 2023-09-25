@@ -16,6 +16,10 @@ spring:
             group: dev
           - dataId: mybatis.yml
             group: dev
+          - dataId: redis.yml
+            group: dev
+  thymeleaf:
+    cache: false
 
   application:
     name: gulimall-member
