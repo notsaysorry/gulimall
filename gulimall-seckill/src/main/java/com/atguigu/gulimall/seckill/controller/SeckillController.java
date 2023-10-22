@@ -51,7 +51,6 @@ public class SeckillController {
     @GetMapping(value = "/sku/seckill/{skuId}")
     @ResponseBody
     public R getSkuSeckilInfo(@PathVariable("skuId") String skuId) {
-
         SeckillSkuRedisTo to = seckillService.getSkuSeckilInfo(skuId);
         R ok = R.ok();
         ok.setData(to);
@@ -68,8 +67,16 @@ public class SeckillController {
     @GetMapping(value = "/kill")
     public String seckill(@RequestParam("killId") String killId,
                           @RequestParam("key") String key,
-                          @RequestParam("num") Integer num
-                         ) {
+                          @RequestParam("num") Integer num,
+                         Model model) {
+        String orderSn = null;
+        try {
+            //1、判断是否登录
+            orderSn = seckillService.kill(killId,key,num);
+            model.addAttribute("orderSn",orderSn);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return "success";
     }
 

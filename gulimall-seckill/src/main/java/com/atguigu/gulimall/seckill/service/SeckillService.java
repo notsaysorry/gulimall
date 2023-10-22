@@ -22,4 +22,6 @@ public interface SeckillService {
     List<SeckillSkuRedisTo> getCurrentSeckillSkus();
 
     SeckillSkuRedisTo getSkuSeckilInfo(String skuId);
+
+    String kill(String killId, String key, Integer num) throws InterruptedException;
 }

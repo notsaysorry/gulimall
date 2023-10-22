@@ -22,11 +22,11 @@ public class SeckillOrderTo {
     /**
      * 活动场次id
      */
-    private Long promotionSessionId;
+    private String promotionSessionId;
     /**
      * 商品id
      */
-    private Long skuId;
+    private String skuId;
     /**
      * 秒杀价格
      */
@@ -40,7 +40,7 @@ public class SeckillOrderTo {
     /**
      * 会员ID
      */
-    private Long memberId;
+    private String memberId;
 
 
 }

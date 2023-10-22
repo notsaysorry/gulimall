@@ -1,6 +1,11 @@
 logging:
   level:
     com.atguigu.gulimall: debug
+    org:
+      springframework:
+        cloud:
+          openfeign: debug
+          sleuth: debug
 
 gulimall:
   thread:
@@ -8,7 +13,15 @@ gulimall:
     max-size: 200
     time: 10
     queue-size: 10000
-
+#开启feign对sentinel的支持
+feign:
+  sentinel:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 60000
+        readTimeout: 60000
 
 spring:
   session:

@@ -14,7 +14,8 @@ spring:
         ext-config:
           - dataId: oss.yml
             group: dev
-
+          - dataId: zipkin.yml
+            group: dev
       alicloud:
         sms:
           host: https://fesms.market.alicloudapi.com
@@ -22,7 +23,12 @@ spring:
           skin: 1
           sign: 175622
           appcode: b0563c23aff8428c97a54d4f7f9e28e5
-
+    sentinel:
+      transport:
+        #配置sentinel dashboard地址
+        dashboard: localhost:8133
+        #默认8719端口，假如被占用会自动从8719开始依次+1扫描，直至找到未被占用的端口
+        port: 8719
   application:
     name: gulimall-third-part
 
